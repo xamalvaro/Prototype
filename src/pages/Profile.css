@@ -1,0 +1,143 @@
+.profile {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+.profile__loading,
+.profile__not-found {
+  text-align: center;
+  padding: 60px 24px;
+  color: #9ca3af;
+  font-size: 15px;
+}
+
+.profile__not-found a {
+  display: inline-block;
+  margin-top: 12px;
+  color: #7C3AED;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.profile__header-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profile__avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.profile__identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile__display-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.profile__username {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.profile__follow-btn {
+  background: #7C3AED;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 8px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.profile__follow-btn:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.profile__follow-btn--following {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+}
+
+.profile__follow-btn--following:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.profile__follow-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile__bio {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+
+.profile__stats {
+  display: flex;
+  gap: 24px;
+}
+
+.profile__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.profile__stat-count {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.profile__stat-label {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.profile__posts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile__posts-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 4px;
+}
+
+.profile__empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: #9ca3af;
+  font-size: 15px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+}

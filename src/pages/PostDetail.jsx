@@ -1,19 +1,24 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { posts, followerNotifications } from '../data/mockData';
+import { useAuth } from '../contexts/AuthContext';
+import {
+  subscribeToPost,
+  subscribeToComments,
+  addComment,
+  deleteComment,
+  likePost,
+  unlikePost,
+  subscribeToLike,
+  createNotification,
+} from '../firebase/firestore';
+import AvatarInitials from '../components/AvatarInitials';
+import { formatRelativeTime } from '../components/PostCard';
 import './PostDetail.css';
 
-function HeartIcon() {
+function HeartIcon({ filled }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill={filled ? '#ef4444' : 'none'} stroke={filled ? '#ef4444' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-    </svg>
-  );
-}
-
-function CommentIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
   );
 }
@@ -26,32 +31,122 @@ function BackIcon() {
   );
 }
 
-function CommentThread({ comment, depth = 0 }) {
+function TrashIcon() {
   return (
-    <div className={`comment ${depth > 0 ? 'comment--nested' : ''}`} style={{ marginLeft: depth * 24 + 'px' }}>
-      <div className="comment__header">
-        <div className="comment__avatar">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-          </svg>
-        </div>
-        <span className="comment__author">{comment.author}</span>
-      </div>
-      <p className="comment__text">{comment.text}</p>
-      {comment.replies && comment.replies.length > 0 && (
-        <div className="comment__replies">
-          {comment.replies.map(reply => (
-            <CommentThread key={reply.id} comment={reply} depth={depth + 1} />
-          ))}
-        </div>
-      )}
-    </div>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14H6L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4h6v2"/>
+    </svg>
   );
 }
 
 function PostDetail() {
   const { id } = useParams();
-  const post = posts.find(p => p.id === parseInt(id));
+  const { currentUser, userProfile } = useAuth();
+  const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubPost = subscribeToPost(id, (data) => {
+      setPost(data);
+      if (data) setLikeCount(data.likesCount || 0);
+      setLoading(false);
+    });
+    const unsubComments = subscribeToComments(id, setComments);
+    return () => {
+      unsubPost();
+      unsubComments();
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const unsub = subscribeToLike(currentUser.uid, id, setLiked);
+    return unsub;
+  }, [currentUser, id]);
+
+  useEffect(() => {
+    if (post) setLikeCount(post.likesCount || 0);
+  }, [post]);
+
+  async function handleLike() {
+    if (!currentUser || likeLoading) return;
+    setLikeLoading(true);
+    try {
+      if (liked) {
+        await unlikePost(currentUser.uid, id);
+      } else {
+        await likePost(currentUser.uid, id);
+        if (post && post.authorId !== currentUser.uid) {
+          await createNotification({
+            userId: post.authorId,
+            type: 'like',
+            fromUserId: currentUser.uid,
+            fromUsername: userProfile?.username || '',
+            postId: id,
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Like error:', err);
+    }
+    setLikeLoading(false);
+  }
+
+  async function handleAddComment(e) {
+    e.preventDefault();
+    if (!commentText.trim() || !currentUser || commentLoading) return;
+    setCommentLoading(true);
+    try {
+      await addComment(
+        id,
+        currentUser.uid,
+        userProfile?.username || '',
+        userProfile?.displayName || '',
+        commentText.trim()
+      );
+      if (post && post.authorId !== currentUser.uid) {
+        await createNotification({
+          userId: post.authorId,
+          type: 'comment',
+          fromUserId: currentUser.uid,
+          fromUsername: userProfile?.username || '',
+          postId: id,
+        });
+      }
+      setCommentText('');
+    } catch (err) {
+      console.error('Comment error:', err);
+    }
+    setCommentLoading(false);
+  }
+
+  async function handleDeleteComment(commentId) {
+    if (!window.confirm('Delete this comment?')) return;
+    try {
+      await deleteComment(commentId, id);
+    } catch (err) {
+      console.error('Delete comment error:', err);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="post-detail-wrapper">
+        <div className="post-detail">
+          <div className="post-detail--loading">Loading post...</div>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -72,68 +167,89 @@ function PostDetail() {
 
         <div className="post-detail__card">
           <div className="post-detail__author-row">
-            <div className="post-detail__author-avatar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-              </svg>
+            <Link to={`/profile/${post.authorUsername}`}>
+              <AvatarInitials username={post.authorUsername} displayName={post.authorDisplayName} size={40} />
+            </Link>
+            <div className="post-detail__author-info">
+              <Link to={`/profile/${post.authorUsername}`} className="post-detail__author-name">
+                {post.authorDisplayName}
+              </Link>
+              <span className="post-detail__author-handle">@{post.authorUsername}</span>
             </div>
-            <span className="post-detail__author">Posted by: {post.author}</span>
+            <span className="post-detail__timestamp">{formatRelativeTime(post.createdAt)}</span>
           </div>
 
-          <h1 className="post-detail__title">{post.title}</h1>
-
-          <div className="post-detail__image-wrapper">
-            <img src={post.image} alt={post.title} className="post-detail__image" />
-          </div>
-
-          {post.pinnedDiscussion && (
-            <div className="post-detail__pinned">
-              <span className="post-detail__pinned-label">📌 Pinned</span>
-              <p className="post-detail__pinned-text">{post.pinnedDiscussion}</p>
-            </div>
-          )}
+          <p className="post-detail__content">{post.content}</p>
 
           <div className="post-detail__actions">
-            <button className="post-detail__action-btn">
-              <HeartIcon />
-              <span>{post.likes} Likes</span>
-            </button>
-            <button className="post-detail__action-btn">
-              <CommentIcon />
-              <span>{post.replyCount} Replies</span>
+            <button
+              className={`post-detail__action-btn ${liked ? 'post-detail__action-btn--liked' : ''}`}
+              onClick={handleLike}
+              disabled={likeLoading}
+            >
+              <HeartIcon filled={liked} />
+              <span>{likeCount} {likeCount === 1 ? 'Like' : 'Likes'}</span>
             </button>
           </div>
 
           <div className="post-detail__discussion">
-            <h3 className="post-detail__discussion-title">Discussion</h3>
+            <h3 className="post-detail__discussion-title">Comments ({comments.length})</h3>
+
+            <form className="post-detail__comment-form" onSubmit={handleAddComment}>
+              <AvatarInitials
+                username={userProfile?.username}
+                displayName={userProfile?.displayName}
+                size={32}
+              />
+              <input
+                type="text"
+                className="post-detail__comment-input"
+                placeholder="Write a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="post-detail__comment-submit"
+                disabled={!commentText.trim() || commentLoading}
+              >
+                {commentLoading ? '...' : 'Post'}
+              </button>
+            </form>
+
             <div className="post-detail__comments">
-              {post.comments.map(comment => (
-                <CommentThread key={comment.id} comment={comment} depth={0} />
+              {comments.length === 0 && (
+                <div className="post-detail__no-comments">No comments yet. Be the first!</div>
+              )}
+              {comments.map((comment) => (
+                <div key={comment.id} className="comment">
+                  <div className="comment__header">
+                    <Link to={`/profile/${comment.authorUsername}`}>
+                      <AvatarInitials username={comment.authorUsername} displayName={comment.authorDisplayName} size={28} />
+                    </Link>
+                    <div className="comment__meta">
+                      <Link to={`/profile/${comment.authorUsername}`} className="comment__author">
+                        {comment.authorDisplayName}
+                      </Link>
+                      <span className="comment__time">{formatRelativeTime(comment.createdAt)}</span>
+                    </div>
+                    {currentUser && currentUser.uid === comment.authorId && (
+                      <button
+                        className="comment__delete-btn"
+                        onClick={() => handleDeleteComment(comment.id)}
+                        title="Delete comment"
+                      >
+                        <TrashIcon />
+                      </button>
+                    )}
+                  </div>
+                  <p className="comment__text">{comment.content}</p>
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-
-      <aside className="post-detail__sidebar">
-        <div className="post-detail__sidebar-card">
-          <h3 className="post-detail__sidebar-title">Recent Activity</h3>
-          <div className="post-detail__notifications">
-            {followerNotifications.map(notif => (
-              <div key={notif.id} className="post-detail__notification">
-                <div className="post-detail__notification-avatar">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-                  </svg>
-                </div>
-                <span className="post-detail__notification-text">
-                  <strong>{notif.username}</strong> {notif.action}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </aside>
     </div>
   );
 }

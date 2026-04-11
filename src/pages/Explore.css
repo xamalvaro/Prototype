@@ -1,0 +1,43 @@
+.explore {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+.explore__header {
+  margin-bottom: 24px;
+}
+
+.explore__title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 4px;
+}
+
+.explore__sub {
+  font-size: 14px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.explore__feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.explore__loading,
+.explore__empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: #9ca3af;
+  font-size: 15px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.explore__empty p {
+  margin: 0;
+}

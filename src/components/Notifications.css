@@ -1,0 +1,125 @@
+.notifications-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 340px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  z-index: 300;
+  overflow: hidden;
+}
+
+.notifications-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.notifications-panel__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.notifications-panel__mark-all {
+  font-size: 12px;
+  color: #7C3AED;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.notifications-panel__mark-all:hover {
+  background: #ede9fe;
+}
+
+.notifications-panel__list {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.notifications-panel__empty {
+  padding: 32px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.notifications-panel__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+}
+
+.notifications-panel__item:hover {
+  background: #f9fafb;
+}
+
+.notifications-panel__item--unread {
+  background: #faf5ff;
+}
+
+.notifications-panel__item--unread:hover {
+  background: #ede9fe;
+}
+
+.notifications-panel__item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.notifications-panel__item-text {
+  font-size: 13px;
+  color: #374151;
+  line-height: 1.45;
+}
+
+.notifications-panel__item-user {
+  font-weight: 700;
+  color: #7C3AED;
+  text-decoration: none;
+}
+
+.notifications-panel__item-user:hover {
+  text-decoration: underline;
+}
+
+.notifications-panel__item-link {
+  color: #7C3AED;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.notifications-panel__item-link:hover {
+  text-decoration: underline;
+}
+
+.notifications-panel__item-time {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.notifications-panel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7C3AED;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
