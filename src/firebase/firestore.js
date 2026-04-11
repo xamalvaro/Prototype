@@ -171,12 +171,13 @@ export function subscribeToFeed(uid, followingIds, callback) {
   const q = query(
     collection(db, 'posts'),
     where('authorId', 'in', authorIds),
-    orderBy('createdAt', 'desc'),
     limit(50)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const posts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    posts.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    callback(posts);
+  }, (err) => console.error('subscribeToFeed error:', err));
 }
 
 // Only own posts feed (used when following list is empty)
@@ -184,12 +185,13 @@ export function subscribeToOwnPosts(uid, callback) {
   const q = query(
     collection(db, 'posts'),
     where('authorId', '==', uid),
-    orderBy('createdAt', 'desc'),
     limit(50)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const posts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    posts.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    callback(posts);
+  }, (err) => console.error('subscribeToOwnPosts error:', err));
 }
 
 // Explore: all posts
@@ -209,12 +211,13 @@ export function subscribeToUserPosts(userId, callback) {
   const q = query(
     collection(db, 'posts'),
     where('authorId', '==', userId),
-    orderBy('createdAt', 'desc'),
     limit(50)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const posts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    posts.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    callback(posts);
+  }, (err) => console.error('subscribeToUserPosts error:', err));
 }
 
 // ─── Like helpers ──────────────────────────────────────────────
@@ -266,12 +269,13 @@ export async function deleteComment(commentId, postId) {
 export function subscribeToComments(postId, callback) {
   const q = query(
     collection(db, 'comments'),
-    where('postId', '==', postId),
-    orderBy('createdAt', 'asc')
+    where('postId', '==', postId)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const comments = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    comments.sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
+    callback(comments);
+  }, (err) => console.error('subscribeToComments error:', err));
 }
 
 // ─── Notification helpers ──────────────────────────────────────
@@ -292,12 +296,13 @@ export function subscribeToNotifications(userId, callback) {
   const q = query(
     collection(db, 'notifications'),
     where('userId', '==', userId),
-    orderBy('createdAt', 'desc'),
     limit(30)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const notifs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    notifs.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    callback(notifs);
+  }, (err) => console.error('subscribeToNotifications error:', err));
 }
 
 export async function markNotificationRead(notificationId) {
