@@ -1,0 +1,100 @@
+.messages {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+.messages__conversations {
+  width: 300px;
+  flex-shrink: 0;
+  background: #f3f4f6;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages__conversations-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.messages__title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.messages__conversations-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages__empty-conversations {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  text-align: center;
+  gap: 8px;
+}
+
+.messages__empty-icon {
+  color: #d1d5db;
+  margin-bottom: 8px;
+}
+
+.messages__empty-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.messages__empty-hint {
+  font-size: 13px;
+  color: #d1d5db;
+  margin: 0;
+}
+
+/* Thread panel */
+.messages__thread {
+  flex: 1;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.messages__thread-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 32px;
+}
+
+.messages__thread-empty-icon {
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.messages__thread-empty-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #d1d5db;
+  margin: 0;
+}
+
+.messages__thread-empty-hint {
+  font-size: 14px;
+  color: #e5e7eb;
+  margin: 0;
+}

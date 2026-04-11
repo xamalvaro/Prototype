@@ -1,0 +1,14 @@
+.layout {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.layout__body {
+  display: flex;
+  min-height: calc(100vh - 60px);
+}
+
+.layout__main {
+  flex: 1;
+  overflow-y: auto;
+}
