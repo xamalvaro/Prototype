@@ -3,7 +3,12 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { getUserByUid } from '../firebase/firestore';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext({
+  currentUser: null,
+  userProfile: null,
+  loading: true,
+  refreshUserProfile: async () => {},
+});
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);

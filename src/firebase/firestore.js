@@ -361,23 +361,33 @@ export async function markConversationRead(conversationId, userId) {
 export function subscribeToConversations(userId, callback) {
   const q = query(
     collection(db, 'conversations'),
-    where('participants', 'array-contains', userId),
-    orderBy('lastMessageAt', 'desc')
+    where('participants', 'array-contains', userId)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const convs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    convs.sort((a, b) => {
+      const aTime = a.lastMessageAt?.toMillis?.() || 0;
+      const bTime = b.lastMessageAt?.toMillis?.() || 0;
+      return bTime - aTime;
+    });
+    callback(convs);
+  }, (err) => console.error('subscribeToConversations error:', err));
 }
 
 export function subscribeToMessages(conversationId, callback) {
   const q = query(
     collection(db, 'messages'),
-    where('conversationId', '==', conversationId),
-    orderBy('createdAt', 'asc')
+    where('conversationId', '==', conversationId)
   );
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-  });
+    const msgs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    msgs.sort((a, b) => {
+      const aTime = a.createdAt?.toMillis?.() || 0;
+      const bTime = b.createdAt?.toMillis?.() || 0;
+      return aTime - bTime;
+    });
+    callback(msgs);
+  }, (err) => console.error('subscribeToMessages error:', err));
 }
 
 // Get mutual follows (users who follow back)
