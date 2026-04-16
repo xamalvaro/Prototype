@@ -125,7 +125,6 @@
   margin-bottom: 8px;
   text-align: center;
   text-shadow: var(--glow-purple);
-  animation: glow-pulse 3s ease-in-out infinite;
 }
 
 .auth-card__tagline {

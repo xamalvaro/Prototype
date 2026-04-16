@@ -657,7 +657,7 @@ function Messages() {
       </div>
 
       <div className="messages__thread">
-        {!activeConvId || !activeConv ? (
+        {!activeConvId ? (
           <div className="messages__thread-empty">
             <div className="messages__thread-empty-icon"><MessagesEmptyIcon /></div>
             <p className="messages__thread-empty-text">Select a conversation</p>
@@ -666,7 +666,7 @@ function Messages() {
         ) : (
           <>
             <div className="messages__thread-header">
-              {activeConv.type === 'group' ? (
+              {activeConv?.type === 'group' ? (
                 <>
                   <GroupAvatar photoUrl={activeConv.groupPhotoUrl} name={activeConv.groupName} size={36} />
                   <div className="messages__thread-header-info">
@@ -723,7 +723,7 @@ function Messages() {
                       <AvatarInitials username={msg.senderUsername} displayName={msg.senderUsername} avatarUrl={msg.senderAvatarUrl || null} size={28} />
                     )}
                     <div className="messages__message-bubble-wrap">
-                      {!isOwn && activeConv.type === 'group' && (
+                      {!isOwn && activeConv?.type === 'group' && (
                         <span style={{ fontSize: 10, color: 'var(--accent-teal)', fontFamily: 'var(--font-mono)', marginBottom: 2 }}>
                           {msg.senderUsername}
                         </span>

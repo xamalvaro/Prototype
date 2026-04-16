@@ -11,8 +11,8 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
-    function isParticipant(conv) {
-      return isSignedIn() && request.auth.uid in conv.data.participants;
+    function isParticipantByResource() {
+      return isSignedIn() && request.auth.uid in resource.data.participants;
     }
 
     // ── Users ────────────────────────────────────────────────────
@@ -89,24 +89,26 @@ service cloud.firestore {
     }
 
     // ── Conversations ─────────────────────────────────────────────
-    // Only participants can read or write a conversation
+    // Only participants can read or write a conversation.
+    // Uses resource.data (not get()) so list queries work correctly.
     match /conversations/{convId} {
-      allow read: if isParticipant(get(/databases/$(database)/documents/conversations/$(convId)));
+      allow read: if isParticipantByResource();
       allow create: if isSignedIn()
                     && request.auth.uid in request.resource.data.participants;
-      allow update: if isParticipant(get(/databases/$(database)/documents/conversations/$(convId)));
+      allow update: if isParticipantByResource();
       allow delete: if false;
     }
 
     // ── Messages ──────────────────────────────────────────────────
-    // Only participants of the parent conversation can read/write messages
+    // Only participants of the parent conversation can read/write messages.
+    // get() is acceptable here since it's a cross-collection lookup (not circular).
     match /messages/{messageId} {
       allow read: if isSignedIn()
                   && request.auth.uid in get(/databases/$(database)/documents/conversations/$(resource.data.conversationId)).data.participants;
       allow create: if isSignedIn()
                     && request.auth.uid == request.resource.data.senderId
                     && request.auth.uid in get(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId)).data.participants;
-      allow update: if false; // messages are immutable
+      allow update: if false;
       allow delete: if false;
     }
 
