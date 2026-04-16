@@ -127,8 +127,10 @@ function PostCard({ post, showActions = true }) {
     setEditLoading(false);
   }
 
+  const channel = post.id ? (post.id.charCodeAt(0) % 98) + 1 : 42;
+
   return (
-    <div className="post-card">
+    <div className={`post-card${!post.mediaUrl ? ' post-card--text-only' : ''}`}>
       <div className="post-card__header">
         <Link to={`/profile/${post.authorUsername}`} className="post-card__author-link">
           <AvatarInitials username={post.authorUsername} displayName={post.authorDisplayName} size={32} />
@@ -173,14 +175,40 @@ function PostCard({ post, showActions = true }) {
         </Link>
       )}
 
-      {post.mediaUrl && post.mediaType === 'image' && (
-        <div className="post-card__media">
-          <img src={post.mediaUrl} alt="post media" className="post-card__media-img" />
-        </div>
-      )}
-      {post.mediaUrl && post.mediaType === 'video' && (
-        <div className="post-card__media">
-          <video src={post.mediaUrl} className="post-card__media-video" controls />
+      {post.mediaUrl && (
+        <div className="tv-frame">
+          <div className="tv-cabinet">
+            <div className="tv-antenna-left"></div>
+            <div className="tv-antenna-right"></div>
+            <div className="tv-screen-bezel">
+              <div className="tv-screen">
+                {post.mediaType === 'image' ? (
+                  <img src={post.mediaUrl} alt="post media" />
+                ) : (
+                  <video src={post.mediaUrl} controls />
+                )}
+              </div>
+            </div>
+            <div className="tv-controls">
+              <div className="tv-knob"></div>
+              <div className="tv-speaker">
+                <div className="tv-speaker-dot"></div>
+                <div className="tv-speaker-dot"></div>
+                <div className="tv-speaker-dot"></div>
+              </div>
+              <span className="tv-channel">CH {channel}</span>
+              <div className="tv-speaker">
+                <div className="tv-speaker-dot"></div>
+                <div className="tv-speaker-dot"></div>
+                <div className="tv-speaker-dot"></div>
+              </div>
+              <div className="tv-knob"></div>
+            </div>
+          </div>
+          <div className="tv-legs">
+            <div className="tv-leg"></div>
+            <div className="tv-leg"></div>
+          </div>
         </div>
       )}
 

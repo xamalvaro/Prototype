@@ -13,6 +13,7 @@ import {
 } from '../firebase/firestore';
 import AvatarInitials from '../components/AvatarInitials';
 import { formatRelativeTime } from '../components/PostCard';
+import '../components/PostCard.css';
 import './PostDetail.css';
 
 function HeartIcon({ filled }) {
@@ -181,16 +182,45 @@ function PostDetail() {
 
           <p className="post-detail__content">{post.content}</p>
 
-          {post.mediaUrl && post.mediaType === 'image' && (
-            <div className="post-detail__media">
-              <img src={post.mediaUrl} alt="post media" className="post-detail__media-img" />
-            </div>
-          )}
-          {post.mediaUrl && post.mediaType === 'video' && (
-            <div className="post-detail__media">
-              <video src={post.mediaUrl} className="post-detail__media-video" controls />
-            </div>
-          )}
+          {post.mediaUrl && (() => {
+            const channel = post.id ? (post.id.charCodeAt(0) % 98) + 1 : 42;
+            return (
+              <div className="tv-frame">
+                <div className="tv-cabinet">
+                  <div className="tv-antenna-left"></div>
+                  <div className="tv-antenna-right"></div>
+                  <div className="tv-screen-bezel">
+                    <div className="tv-screen">
+                      {post.mediaType === 'image' ? (
+                        <img src={post.mediaUrl} alt="post media" />
+                      ) : (
+                        <video src={post.mediaUrl} controls />
+                      )}
+                    </div>
+                  </div>
+                  <div className="tv-controls">
+                    <div className="tv-knob"></div>
+                    <div className="tv-speaker">
+                      <div className="tv-speaker-dot"></div>
+                      <div className="tv-speaker-dot"></div>
+                      <div className="tv-speaker-dot"></div>
+                    </div>
+                    <span className="tv-channel">CH {channel}</span>
+                    <div className="tv-speaker">
+                      <div className="tv-speaker-dot"></div>
+                      <div className="tv-speaker-dot"></div>
+                      <div className="tv-speaker-dot"></div>
+                    </div>
+                    <div className="tv-knob"></div>
+                  </div>
+                </div>
+                <div className="tv-legs">
+                  <div className="tv-leg"></div>
+                  <div className="tv-leg"></div>
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="post-detail__actions">
             <button
