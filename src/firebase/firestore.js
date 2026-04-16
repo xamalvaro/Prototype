@@ -15,6 +15,7 @@ import {
   serverTimestamp,
   increment,
   arrayUnion,
+  arrayRemove,
   writeBatch,
 } from 'firebase/firestore';
 import { db } from './config';
@@ -438,4 +439,69 @@ export async function getMutualFollows(uid) {
     }
   }
   return mutuals;
+}
+
+// ─── Group conversation helpers ────────────────────────────────
+
+export async function createGroupConversation(adminId, adminUsername, adminDisplayName, memberUids, memberUsernames, memberDisplayNames, groupName, groupPhotoUrl = null) {
+  const participants = [adminId, ...memberUids];
+  const participantUsernames = { [adminId]: adminUsername, ...memberUsernames };
+  const participantDisplayNames = { [adminId]: adminDisplayName, ...memberDisplayNames };
+  const ref = await addDoc(collection(db, 'conversations'), {
+    type: 'group',
+    groupName,
+    groupPhotoUrl,
+    adminId,
+    participants,
+    participantUsernames,
+    participantDisplayNames,
+    lastMessage: '',
+    lastMessageAt: serverTimestamp(),
+    unreadCount: Object.fromEntries(participants.map((uid) => [uid, 0])),
+  });
+  return ref.id;
+}
+
+export async function updateGroupInfo(conversationId, groupName, groupPhotoUrl) {
+  await updateDoc(doc(db, 'conversations', conversationId), { groupName, groupPhotoUrl });
+}
+
+export async function addGroupMember(conversationId, uid, username, displayName) {
+  await updateDoc(doc(db, 'conversations', conversationId), {
+    participants: arrayUnion(uid),
+    [`participantUsernames.${uid}`]: username,
+    [`participantDisplayNames.${uid}`]: displayName,
+    [`unreadCount.${uid}`]: 0,
+  });
+}
+
+export async function leaveGroup(conversationId, uid) {
+  await updateDoc(doc(db, 'conversations', conversationId), {
+    participants: arrayRemove(uid),
+  });
+}
+
+export async function sendGroupMessage(conversationId, senderId, senderUsername, content, participantIds, mediaUrl = null, mediaType = null) {
+  const batch = writeBatch(db);
+  const msgRef = doc(collection(db, 'messages'));
+  batch.set(msgRef, {
+    conversationId,
+    senderId,
+    senderUsername,
+    content,
+    mediaUrl,
+    mediaType,
+    createdAt: serverTimestamp(),
+  });
+  const convRef = doc(db, 'conversations', conversationId);
+  const unreadUpdates = {};
+  participantIds.filter((id) => id !== senderId).forEach((id) => {
+    unreadUpdates[`unreadCount.${id}`] = increment(1);
+  });
+  batch.update(convRef, {
+    lastMessage: content || '[media]',
+    lastMessageAt: serverTimestamp(),
+    ...unreadUpdates,
+  });
+  await batch.commit();
 }
