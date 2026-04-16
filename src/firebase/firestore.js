@@ -15,6 +15,7 @@ import {
   serverTimestamp,
   increment,
   arrayUnion,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from './config';
 
@@ -63,6 +64,21 @@ export async function updateUserProfile(uid, { displayName, bio }) {
 
 export async function updateUserAvatar(uid, avatarUrl) {
   await updateDoc(doc(db, 'users', uid), { avatarUrl });
+
+  // Batch-update all posts and comments by this user with the new avatar
+  const batch = writeBatch(db);
+
+  const postsSnap = await getDocs(
+    query(collection(db, 'posts'), where('authorId', '==', uid))
+  );
+  postsSnap.docs.forEach((d) => batch.update(d.ref, { authorAvatarUrl: avatarUrl }));
+
+  const commentsSnap = await getDocs(
+    query(collection(db, 'comments'), where('authorId', '==', uid))
+  );
+  commentsSnap.docs.forEach((d) => batch.update(d.ref, { authorAvatarUrl: avatarUrl }));
+
+  await batch.commit();
 }
 
 export function searchUsers(prefix, callback) {
@@ -125,11 +141,12 @@ export function subscribeToFollowStatus(followerId, followingId, callback) {
 
 // ─── Post helpers ──────────────────────────────────────────────
 
-export async function createPost(authorId, authorUsername, authorDisplayName, content, mediaUrl = null, mediaType = null) {
+export async function createPost(authorId, authorUsername, authorDisplayName, content, mediaUrl = null, mediaType = null, authorAvatarUrl = null) {
   const ref = await addDoc(collection(db, 'posts'), {
     authorId,
     authorUsername,
     authorDisplayName,
+    authorAvatarUrl,
     content,
     mediaUrl,
     mediaType,
@@ -255,12 +272,13 @@ export function subscribeToLike(userId, postId, callback) {
 
 // ─── Comment helpers ───────────────────────────────────────────
 
-export async function addComment(postId, authorId, authorUsername, authorDisplayName, content) {
+export async function addComment(postId, authorId, authorUsername, authorDisplayName, content, authorAvatarUrl = null) {
   await addDoc(collection(db, 'comments'), {
     postId,
     authorId,
     authorUsername,
     authorDisplayName,
+    authorAvatarUrl,
     content,
     createdAt: serverTimestamp(),
   });
@@ -348,16 +366,18 @@ export async function getOrCreateConversation(uid1, username1, uid2, username2) 
   return convId;
 }
 
-export async function sendMessage(conversationId, senderId, senderUsername, content, recipientId) {
+export async function sendMessage(conversationId, senderId, senderUsername, content, recipientId, mediaUrl = null, mediaType = null) {
   await addDoc(collection(db, 'messages'), {
     conversationId,
     senderId,
     senderUsername,
     content,
+    mediaUrl,
+    mediaType,
     createdAt: serverTimestamp(),
   });
   await updateDoc(doc(db, 'conversations', conversationId), {
-    lastMessage: content,
+    lastMessage: content || (mediaUrl ? '[media]' : ''),
     lastMessageAt: serverTimestamp(),
     [`unreadCount.${recipientId}`]: increment(1),
   });

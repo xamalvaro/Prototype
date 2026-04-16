@@ -504,3 +504,21 @@
   border-color: #2a4a2a;
   box-shadow: 0 0 12px rgba(100, 200, 100, 0.1);
 }
+
+.post-card__photo {
+  margin-top: 12px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  max-height: 400px;
+}
+.post-card__photo-img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+  transition: filter 0.2s;
+}
+.post-card__photo-img:hover {
+  filter: brightness(1.05);
+}

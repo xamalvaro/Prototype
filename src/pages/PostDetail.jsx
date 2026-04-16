@@ -112,7 +112,8 @@ function PostDetail() {
         currentUser.uid,
         userProfile?.username || '',
         userProfile?.displayName || '',
-        commentText.trim()
+        commentText.trim(),
+        userProfile?.avatarUrl || null
       );
       if (post && post.authorId !== currentUser.uid) {
         await createNotification({
@@ -169,7 +170,7 @@ function PostDetail() {
         <div className="post-detail__card">
           <div className="post-detail__author-row">
             <Link to={`/profile/${post.authorUsername}`}>
-              <AvatarInitials username={post.authorUsername} displayName={post.authorDisplayName} size={40} />
+              <AvatarInitials username={post.authorUsername} displayName={post.authorDisplayName} size={40} avatarUrl={post.authorAvatarUrl} />
             </Link>
             <div className="post-detail__author-info">
               <Link to={`/profile/${post.authorUsername}`} className="post-detail__author-name">
@@ -184,6 +185,15 @@ function PostDetail() {
 
           {post.mediaUrl && (() => {
             const channel = post.id ? (post.id.charCodeAt(0) % 98) + 1 : 42;
+            const isGif = post.mediaUrl.includes('.gif') || post.mediaUrl.includes('f_gif');
+            const useTV = post.mediaType === 'video' || isGif;
+            if (!useTV) {
+              return (
+                <div className="post-detail__photo">
+                  <img src={post.mediaUrl} alt="post media" className="post-detail__photo-img" />
+                </div>
+              );
+            }
             return (
               <div className="tv-frame">
                 <div className="tv-cabinet">
@@ -266,7 +276,7 @@ function PostDetail() {
                 <div key={comment.id} className="comment">
                   <div className="comment__header">
                     <Link to={`/profile/${comment.authorUsername}`}>
-                      <AvatarInitials username={comment.authorUsername} displayName={comment.authorDisplayName} size={28} />
+                      <AvatarInitials username={comment.authorUsername} displayName={comment.authorDisplayName} size={28} avatarUrl={comment.authorAvatarUrl} />
                     </Link>
                     <div className="comment__meta">
                       <Link to={`/profile/${comment.authorUsername}`} className="comment__author">

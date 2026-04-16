@@ -10,9 +10,13 @@ import {
   sendMessage,
   markConversationRead,
 } from '../firebase/firestore';
+import { uploadMedia } from '../utils/cloudinary';
 import AvatarInitials from '../components/AvatarInitials';
 import { formatRelativeTime } from '../components/PostCard';
 import './Messages.css';
+
+const ACCEPTED_MEDIA_TYPES = 'image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm';
+const MAX_MEDIA_SIZE = 50 * 1024 * 1024;
 
 function SendIcon() {
   return (
@@ -46,8 +50,13 @@ function Messages() {
   const [showNewMsg, setShowNewMsg] = useState(false);
   const [newMsgLoading, setNewMsgLoading] = useState(false);
 
+  const [mediaFile, setMediaFile] = useState(null);
+  const [mediaPreviewUrl, setMediaPreviewUrl] = useState(null);
+  const [mediaUploading, setMediaUploading] = useState(false);
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const mediaInputRef = useRef(null);
 
   // Load mutual follows for new message
   useEffect(() => {
@@ -115,9 +124,30 @@ function Messages() {
     setNewMsgLoading(false);
   }
 
+  function handleMediaSelect(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_MEDIA_SIZE) {
+      alert('File too large. Maximum size is 50MB.');
+      return;
+    }
+    setMediaFile(file);
+    setMediaPreviewUrl(URL.createObjectURL(file));
+  }
+
+  function removeMedia() {
+    setMediaFile(null);
+    if (mediaPreviewUrl) {
+      URL.revokeObjectURL(mediaPreviewUrl);
+      setMediaPreviewUrl(null);
+    }
+    if (mediaInputRef.current) mediaInputRef.current.value = '';
+  }
+
   async function handleSendMessage(e) {
     e.preventDefault();
-    if (!messageText.trim() || !currentUser || !activeConvId || sendLoading) return;
+    if (!messageText.trim() && !mediaFile) return;
+    if (!currentUser || !activeConvId || sendLoading) return;
 
     const conv = conversations.find((c) => c.id === activeConvId);
     if (!conv) return;
@@ -125,18 +155,33 @@ function Messages() {
     if (!recipientId) return;
 
     setSendLoading(true);
+    let uploadedUrl = null;
+    let uploadedType = null;
+
     try {
+      if (mediaFile) {
+        setMediaUploading(true);
+        const result = await uploadMedia(mediaFile);
+        uploadedUrl = result.url;
+        uploadedType = result.mediaType;
+        setMediaUploading(false);
+      }
+
       await sendMessage(
         activeConvId,
         currentUser.uid,
         userProfile?.username || '',
         messageText.trim(),
-        recipientId
+        recipientId,
+        uploadedUrl,
+        uploadedType
       );
       setMessageText('');
+      removeMedia();
       if (inputRef.current) inputRef.current.focus();
     } catch (err) {
       console.error('Send message error:', err);
+      setMediaUploading(false);
     }
     setSendLoading(false);
   }
@@ -262,6 +307,13 @@ function Messages() {
                     <div className="messages__message-bubble-wrap">
                       <div className="messages__message-bubble">
                         {msg.content}
+                        {msg.mediaUrl && (
+                          msg.mediaType === 'video' ? (
+                            <video src={msg.mediaUrl} controls className="message-media-video" />
+                          ) : (
+                            <img src={msg.mediaUrl} alt="media" className="message-media-img" />
+                          )
+                        )}
                       </div>
                       <span className="messages__message-time">
                         {formatRelativeTime(msg.createdAt)}
@@ -273,23 +325,54 @@ function Messages() {
               <div ref={messagesEndRef} />
             </div>
 
-            <form className="messages__thread-input" onSubmit={handleSendMessage}>
-              <input
-                ref={inputRef}
-                type="text"
-                className="messages__thread-input-field"
-                placeholder="Type a message..."
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="messages__thread-send-btn"
-                disabled={!messageText.trim() || sendLoading}
-              >
-                <SendIcon />
-              </button>
-            </form>
+            <div className="messages__input-area">
+              {mediaUploading && (
+                <div className="messages__media-uploading">UPLOADING...</div>
+              )}
+              {!mediaUploading && mediaPreviewUrl && (
+                <div className="messages__media-preview">
+                  {mediaFile?.type?.startsWith('video/') ? (
+                    <video src={mediaPreviewUrl} className="messages__media-preview-thumb" />
+                  ) : (
+                    <img src={mediaPreviewUrl} alt="preview" className="messages__media-preview-thumb" />
+                  )}
+                  <span className="messages__media-preview-name">{mediaFile?.name}</span>
+                  <button type="button" className="messages__media-preview-remove" onClick={removeMedia}>✕</button>
+                </div>
+              )}
+              <form className="messages__thread-input" onSubmit={handleSendMessage}>
+                <button
+                  type="button"
+                  className="messages__attachment-btn"
+                  onClick={() => mediaInputRef.current?.click()}
+                  title="Attach media"
+                >
+                  📎
+                </button>
+                <input
+                  ref={mediaInputRef}
+                  type="file"
+                  accept={ACCEPTED_MEDIA_TYPES}
+                  onChange={handleMediaSelect}
+                  style={{ display: 'none' }}
+                />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="messages__thread-input-field"
+                  placeholder="Type a message..."
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="messages__thread-send-btn"
+                  disabled={(!messageText.trim() && !mediaFile) || sendLoading || mediaUploading}
+                >
+                  <SendIcon />
+                </button>
+              </form>
+            </div>
           </>
         )}
       </div>

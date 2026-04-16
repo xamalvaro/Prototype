@@ -330,3 +330,21 @@
 .comment__delete-btn:hover {
   color: #ef4444;
 }
+
+.post-detail__photo {
+  margin-top: 12px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  max-height: 500px;
+}
+.post-detail__photo-img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  display: block;
+  transition: filter 0.2s;
+}
+.post-detail__photo-img:hover {
+  filter: brightness(1.05);
+}

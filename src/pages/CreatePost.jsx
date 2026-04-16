@@ -101,7 +101,8 @@ function CreatePost() {
         userProfile.displayName,
         content.trim(),
         uploadedUrl,
-        uploadedType
+        uploadedType,
+        userProfile?.avatarUrl || null
       );
       navigate('/');
     } catch (err) {
