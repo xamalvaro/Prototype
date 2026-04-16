@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUp } from '../firebase/auth';
-import { isUsernameTaken } from '../firebase/firestore';
 import './SignIn.css';
 import './SignUp.css';
 
@@ -35,12 +34,6 @@ function SignUp() {
 
     setLoading(true);
     try {
-      const taken = await isUsernameTaken(cleanUsername);
-      if (taken) {
-        setError('That username is already taken.');
-        setLoading(false);
-        return;
-      }
       await signUp(email, password, cleanUsername, displayName.trim());
       navigate('/');
     } catch (err) {
@@ -53,7 +46,8 @@ function SignUp() {
     switch (code) {
       case 'auth/email-already-in-use': return 'An account with this email already exists.';
       case 'auth/invalid-email': return 'Invalid email address.';
-      case 'auth/weak-password': return 'Password is too weak.';
+      case 'auth/weak-password': return 'Password must be at least 6 characters.';
+      case 'auth/username-taken': return 'That username is already taken.';
       default: return 'Sign up failed. Please try again.';
     }
   }
