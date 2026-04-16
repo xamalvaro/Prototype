@@ -155,6 +155,7 @@ function TopBar() {
               <AvatarInitials
                 username={userProfile.username}
                 displayName={userProfile.displayName}
+                avatarUrl={userProfile?.avatarUrl}
                 size={36}
               />
             ) : (

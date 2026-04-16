@@ -181,6 +181,17 @@ function PostDetail() {
 
           <p className="post-detail__content">{post.content}</p>
 
+          {post.mediaUrl && post.mediaType === 'image' && (
+            <div className="post-detail__media">
+              <img src={post.mediaUrl} alt="post media" className="post-detail__media-img" />
+            </div>
+          )}
+          {post.mediaUrl && post.mediaType === 'video' && (
+            <div className="post-detail__media">
+              <video src={post.mediaUrl} className="post-detail__media-video" controls />
+            </div>
+          )}
+
           <div className="post-detail__actions">
             <button
               className={`post-detail__action-btn ${liked ? 'post-detail__action-btn--liked' : ''}`}

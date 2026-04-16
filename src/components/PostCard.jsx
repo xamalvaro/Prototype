@@ -173,6 +173,17 @@ function PostCard({ post, showActions = true }) {
         </Link>
       )}
 
+      {post.mediaUrl && post.mediaType === 'image' && (
+        <div className="post-card__media">
+          <img src={post.mediaUrl} alt="post media" className="post-card__media-img" />
+        </div>
+      )}
+      {post.mediaUrl && post.mediaType === 'video' && (
+        <div className="post-card__media">
+          <video src={post.mediaUrl} className="post-card__media-video" controls />
+        </div>
+      )}
+
       {showActions && (
         <div className="post-card__footer">
           <div className="post-card__actions">

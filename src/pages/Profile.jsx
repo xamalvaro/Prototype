@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -8,7 +8,9 @@ import {
   unfollowUser,
   subscribeToFollowStatus,
   createNotification,
+  updateUserAvatar,
 } from '../firebase/firestore';
+import { uploadMedia } from '../utils/cloudinary';
 import PostCard from '../components/PostCard';
 import AvatarInitials from '../components/AvatarInitials';
 import './Profile.css';
@@ -21,6 +23,9 @@ function Profile() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState('');
+  const avatarInputRef = useRef(null);
 
   const isOwnProfile = currentUser && profile && currentUser.uid === profile.uid;
 
@@ -50,6 +55,13 @@ function Profile() {
     };
   }, [username, currentUser]);
 
+  // Sync own profile avatar from userProfile context (keeps it live)
+  useEffect(() => {
+    if (isOwnProfile && userProfile?.avatarUrl && profile) {
+      setProfile((prev) => prev ? { ...prev, avatarUrl: userProfile.avatarUrl } : prev);
+    }
+  }, [userProfile?.avatarUrl]);
+
   async function handleFollow() {
     if (!currentUser || !profile || followLoading) return;
     setFollowLoading(true);
@@ -69,6 +81,31 @@ function Profile() {
       console.error('Follow error:', err);
     }
     setFollowLoading(false);
+  }
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setAvatarError('Please select an image file.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setAvatarError('Image too large. Max 10MB.');
+      return;
+    }
+    setAvatarError('');
+    setAvatarUploading(true);
+    try {
+      const { url } = await uploadMedia(file);
+      await updateUserAvatar(currentUser.uid, url);
+      setProfile((prev) => prev ? { ...prev, avatarUrl: url } : prev);
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+      setAvatarError('Avatar upload failed. Please try again.');
+    }
+    setAvatarUploading(false);
+    if (avatarInputRef.current) avatarInputRef.current.value = '';
   }
 
   if (loading) {
@@ -95,11 +132,51 @@ function Profile() {
       <div className="profile__header-card">
         <div className="profile__avatar-row">
           <div className="profile__avatar-ring">
-            <AvatarInitials username={profile.username} displayName={profile.displayName} size={72} />
+            {isOwnProfile ? (
+              <div className="profile__avatar-upload-wrapper">
+                <AvatarInitials
+                  username={profile.username}
+                  displayName={profile.displayName}
+                  avatarUrl={profile.avatarUrl}
+                  size={72}
+                />
+                {avatarUploading ? (
+                  <div className="profile__avatar-overlay profile__avatar-overlay--loading">
+                    <span className="profile__avatar-uploading">...</span>
+                  </div>
+                ) : (
+                  <div
+                    className="profile__avatar-overlay"
+                    onClick={() => avatarInputRef.current?.click()}
+                    title="Change avatar"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                  </div>
+                )}
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleAvatarChange}
+                  style={{ display: 'none' }}
+                />
+              </div>
+            ) : (
+              <AvatarInitials
+                username={profile.username}
+                displayName={profile.displayName}
+                avatarUrl={profile.avatarUrl}
+                size={72}
+              />
+            )}
           </div>
           <div className="profile__identity">
             <h1 className="profile__display-name">{profile.displayName}</h1>
             <span className="profile__username">@{profile.username}</span>
+            {avatarError && <span className="profile__avatar-error">{avatarError}</span>}
           </div>
           {!isOwnProfile && currentUser && (
             <button

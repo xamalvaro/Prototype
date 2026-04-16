@@ -145,3 +145,117 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ── Media upload ── */
+
+.create-post__media-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-post__drop-zone {
+  background: #161b27;
+  border: 2px dashed #2a3148;
+  border-radius: 2px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: crosshair;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 24px;
+}
+
+.create-post__drop-zone:hover,
+.create-post__drop-zone--active {
+  border-color: #7C3AED;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+}
+
+.create-post__drop-label {
+  font-size: 18px;
+  font-family: var(--font-vt);
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+  pointer-events: none;
+}
+
+.create-post__drop-hint {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.create-post__preview-wrapper {
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+  max-height: 320px;
+  background: #000;
+}
+
+.create-post__preview-img {
+  width: 100%;
+  height: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.create-post__preview-video {
+  width: 100%;
+  max-height: 320px;
+  display: block;
+}
+
+.create-post__preview-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--accent-amber);
+  border: 1px solid var(--accent-amber);
+  border-radius: 2px;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+  transition: background 0.15s, box-shadow 0.15s;
+  padding: 0;
+}
+
+.create-post__preview-remove:hover {
+  background: rgba(198, 104, 64, 0.3);
+  box-shadow: 0 0 8px rgba(198, 104, 64, 0.5);
+}
+
+.create-post__upload-loading {
+  background: #161b27;
+  border: 2px dashed #2a3148;
+  border-radius: 2px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes upload-pulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(245, 158, 11, 0.8); }
+  50% { opacity: 0.4; text-shadow: none; }
+}
+
+.create-post__upload-loading-text {
+  font-size: 22px;
+  font-family: var(--font-vt);
+  color: var(--accent-amber);
+  letter-spacing: 4px;
+  animation: upload-pulse 1.2s ease-in-out infinite;
+}

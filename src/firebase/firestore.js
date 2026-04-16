@@ -61,6 +61,10 @@ export async function updateUserProfile(uid, { displayName, bio }) {
   await updateDoc(doc(db, 'users', uid), { displayName, bio });
 }
 
+export async function updateUserAvatar(uid, avatarUrl) {
+  await updateDoc(doc(db, 'users', uid), { avatarUrl });
+}
+
 export function searchUsers(prefix, callback) {
   const lower = prefix.toLowerCase();
   const q = query(
@@ -121,12 +125,14 @@ export function subscribeToFollowStatus(followerId, followingId, callback) {
 
 // ─── Post helpers ──────────────────────────────────────────────
 
-export async function createPost(authorId, authorUsername, authorDisplayName, content) {
+export async function createPost(authorId, authorUsername, authorDisplayName, content, mediaUrl = null, mediaType = null) {
   const ref = await addDoc(collection(db, 'posts'), {
     authorId,
     authorUsername,
     authorDisplayName,
     content,
+    mediaUrl,
+    mediaType,
     likesCount: 0,
     commentsCount: 0,
     createdAt: serverTimestamp(),

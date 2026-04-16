@@ -24,11 +24,28 @@ function getInitials(displayName) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function AvatarInitials({ username, displayName, size = 36 }) {
+function AvatarInitials({ username, displayName, size = 36, avatarUrl }) {
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={displayName || username || 'avatar'}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: '50%',
+          objectFit: 'cover',
+          boxShadow: '0 0 8px rgba(124,58,237,0.5)',
+          flexShrink: 0,
+          display: 'block',
+        }}
+      />
+    );
+  }
+
   const name = username || displayName || '?';
   const color = COLORS[hashString(name) % COLORS.length];
   const initials = getInitials(displayName || username || '?');
-
   const fontSize = size * 0.38;
 
   return (

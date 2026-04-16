@@ -49,10 +49,6 @@ function ProfileIcon() {
 function Sidebar({ username }) {
   return (
     <nav className="sidebar">
-      <div className="sidebar__logo">
-        <span className="sidebar__logo-star">✦</span>
-        NEWSPACE
-      </div>
       <div className="sidebar__nav">
         <NavLink to="/" end className={({ isActive }) => `sidebar__item ${isActive ? 'sidebar__item--active' : ''}`}>
           <HomeIcon />

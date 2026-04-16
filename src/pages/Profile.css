@@ -64,6 +64,58 @@
   flex-shrink: 0;
 }
 
+/* Avatar upload wrapper (own profile) */
+.profile__avatar-upload-wrapper {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.profile__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-amber);
+  opacity: 0;
+  transition: opacity 0.2s;
+  cursor: crosshair;
+}
+
+.profile__avatar-upload-wrapper:hover .profile__avatar-overlay {
+  opacity: 1;
+}
+
+.profile__avatar-overlay--loading {
+  opacity: 1;
+  cursor: default;
+}
+
+.profile__avatar-uploading {
+  font-size: 18px;
+  font-family: var(--font-vt);
+  color: var(--accent-amber);
+  letter-spacing: 2px;
+  animation: upload-pulse 1s ease-in-out infinite;
+}
+
+@keyframes upload-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.profile__avatar-error {
+  display: block;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: #c66840;
+  margin-top: 4px;
+}
+
 .profile__identity {
   flex: 1;
   min-width: 0;
