@@ -54,7 +54,7 @@ function Notifications({ notifications, onClose }) {
   return (
     <div className="notifications-panel" ref={ref}>
       <div className="notifications-panel__header">
-        <span className="notifications-panel__title">Notifications</span>
+        <span className="notifications-panel__title">NOTIFICATIONS</span>
         <button className="notifications-panel__mark-all" onClick={handleMarkAll}>
           Mark all read
         </button>
@@ -66,7 +66,7 @@ function Notifications({ notifications, onClose }) {
         {notifications.map((notif) => (
           <div
             key={notif.id}
-            className={`notifications-panel__item ${!notif.read ? 'notifications-panel__item--unread' : ''}`}
+            className={`notifications-panel__item notifications-panel__item--${notif.type} ${!notif.read ? 'notifications-panel__item--unread' : ''}`}
             onClick={() => handleNotifClick(notif)}
           >
             <AvatarInitials username={notif.fromUsername} displayName={notif.fromUsername} size={34} />

@@ -41,7 +41,7 @@ function CreatePost() {
   return (
     <div className="create-post">
       <div className="create-post__container">
-        <h1 className="create-post__heading">Create a Post</h1>
+        <h1 className="create-post__heading">[ NEW TRANSMISSION ]</h1>
 
         {error && <div className="create-post__error">{error}</div>}
 

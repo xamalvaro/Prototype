@@ -47,6 +47,8 @@ function AvatarInitials({ username, displayName, size = 36 }) {
         flexShrink: 0,
         userSelect: 'none',
         letterSpacing: '0.02em',
+        boxShadow: '0 0 8px rgba(124,58,237,0.5)',
+        fontFamily: 'Share Tech Mono, monospace',
       }}
     >
       {initials}

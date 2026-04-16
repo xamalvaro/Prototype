@@ -36,8 +36,11 @@ function SignIn() {
 
   return (
     <div className="auth-page">
+      <div className="auth-stars"></div>
+      <div className="auth-deco">✦ ✦ ✦</div>
       <div className="auth-card">
         <div className="auth-card__logo">NEWSPACE</div>
+        <p className="auth-card__tagline">[ CONNECT • SHARE • EXPLORE ]<span className="blink-cursor">_</span></p>
         <h1 className="auth-card__heading">Welcome back</h1>
         <p className="auth-card__sub">Sign in to your account</p>
 
@@ -76,7 +79,7 @@ function SignIn() {
         </form>
 
         <p className="auth-card__switch">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link to="/signup" className="auth-card__switch-link">Sign up</Link>
         </p>
       </div>

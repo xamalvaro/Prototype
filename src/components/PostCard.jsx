@@ -184,7 +184,8 @@ function PostCard({ post, showActions = true }) {
               <HeartIcon filled={liked} />
               <span>{likeCount}</span>
             </button>
-            <Link to={`/post/${post.id}`} className="post-card__action-btn">
+            <span className="post-card__actions-sep">◈</span>
+            <Link to={`/post/${post.id}`} className="post-card__action-btn post-card__action-btn--comments">
               <CommentIcon />
               <span>{post.commentsCount || 0}</span>
             </Link>

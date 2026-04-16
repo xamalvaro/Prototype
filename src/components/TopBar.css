@@ -4,21 +4,23 @@
   justify-content: space-between;
   height: 60px;
   padding: 0 24px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .topbar__logo {
-  font-size: 20px;
-  font-weight: 800;
-  color: #7C3AED;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--accent-purple);
   letter-spacing: 3px;
   text-transform: uppercase;
   min-width: 160px;
   user-select: none;
+  text-shadow: var(--glow-purple);
 }
 
 .topbar__search-wrapper {
@@ -31,21 +33,21 @@
 .topbar__search {
   display: flex;
   align-items: center;
-  background: #f3f4f6;
-  border-radius: 9999px;
+  background: var(--bg-card);
+  border-radius: 2px;
   padding: 8px 16px;
   gap: 8px;
-  border: 1.5px solid transparent;
-  transition: border-color 0.15s;
+  border: 1px solid var(--border-color);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .topbar__search:focus-within {
-  border-color: #7C3AED;
-  background: #ffffff;
+  border-color: var(--accent-purple);
+  box-shadow: var(--glow-purple);
 }
 
 .topbar__search-icon {
-  color: #9ca3af;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
 }
@@ -54,13 +56,14 @@
   border: none;
   background: transparent;
   outline: none;
-  font-size: 14px;
-  color: #111827;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
   width: 100%;
 }
 
 .topbar__search-input::placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 .topbar__right {
@@ -79,20 +82,24 @@
 .topbar__notif-btn {
   background: none;
   border: none;
-  cursor: pointer;
-  color: #6b7280;
+  cursor: crosshair;
+  color: var(--text-secondary);
   padding: 6px;
-  border-radius: 9999px;
+  border-radius: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.15s, text-shadow 0.15s;
 }
 
 .topbar__notif-btn:hover {
-  background: #f3f4f6;
-  color: #7C3AED;
+  color: var(--accent-teal);
+  text-shadow: var(--glow-teal);
+}
+
+.topbar__notif-btn:hover svg {
+  filter: drop-shadow(0 0 4px rgba(78, 205, 196, 0.6));
 }
 
 .topbar__notif-badge {
@@ -101,17 +108,18 @@
   right: 0;
   background: #ef4444;
   color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  border-radius: 9999px;
-  min-width: 17px;
-  height: 17px;
+  font-size: 9px;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  border-radius: 2px;
+  min-width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 3px;
-  font-family: inherit;
   line-height: 1;
+  animation: glow-pulse 2s ease-in-out infinite;
 }
 
 /* User section */
@@ -123,45 +131,53 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  cursor: pointer;
+  cursor: crosshair;
   padding: 4px 8px;
-  border-radius: 10px;
+  border-radius: 2px;
   transition: background 0.15s;
 }
 
 .topbar__user:hover {
-  background: #f3f4f6;
+  background: rgba(124, 58, 237, 0.08);
 }
 
 .topbar__user-label {
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--accent-amber);
+  letter-spacing: 0.5px;
+}
+
+/* Avatar ring pulse */
+.topbar__user .avatar-ring {
+  animation: ring-pulse 3s ease-in-out infinite;
+  border-radius: 50%;
 }
 
 .topbar__avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #ede9fe;
-  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.2);
+  color: var(--accent-purple);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #7C3AED;
+  border: 2px solid var(--accent-purple);
   flex-shrink: 0;
+  animation: ring-pulse 3s ease-in-out infinite;
 }
 
 .topbar__user-menu {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), var(--glow-purple);
   overflow: hidden;
-  min-width: 150px;
+  min-width: 160px;
   z-index: 200;
 }
 
@@ -169,27 +185,29 @@
   display: block;
   width: 100%;
   padding: 11px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
   background: none;
   border: none;
-  cursor: pointer;
+  cursor: crosshair;
   text-align: left;
-  font-family: inherit;
-  transition: background 0.1s;
+  transition: background 0.1s, color 0.1s;
+  letter-spacing: 0.3px;
 }
 
 .topbar__user-menu-item:hover {
-  background: #f3f4f6;
+  background: rgba(78, 205, 196, 0.08);
+  color: var(--accent-teal);
 }
 
 .topbar__user-menu-item--danger {
-  color: #dc2626;
+  color: var(--accent-coral);
 }
 
 .topbar__user-menu-item--danger:hover {
-  background: #fef2f2;
+  background: rgba(198, 104, 64, 0.1);
+  color: var(--accent-coral);
 }
 
 /* Search dropdown */
@@ -198,10 +216,10 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   z-index: 200;
 }
@@ -211,12 +229,12 @@
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  cursor: pointer;
+  cursor: crosshair;
   transition: background 0.1s;
 }
 
 .search-dropdown__item:hover {
-  background: #f3f4f6;
+  background: rgba(78, 205, 196, 0.06);
 }
 
 .search-dropdown__info {
@@ -226,19 +244,22 @@
 }
 
 .search-dropdown__username {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--accent-amber);
 }
 
 .search-dropdown__followers {
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--accent-teal);
+  font-family: var(--font-mono);
 }
 
 .search-dropdown__empty {
   padding: 16px;
   text-align: center;
-  font-size: 14px;
-  color: #9ca3af;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
 }

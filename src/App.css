@@ -1,17 +1,117 @@
-*, *::before, *::after {
-  box-sizing: border-box;
+:root {
+  --bg-primary: #0d0f14;
+  --bg-secondary: #12151d;
+  --bg-card: #161b27;
+  --bg-card-hover: #1c2333;
+  --border-color: #2a3148;
+  --border-glow: #7C3AED;
+  --text-primary: #e8e0d0;
+  --text-secondary: #8892aa;
+  --text-muted: #4a5568;
+  --accent-purple: #7C3AED;
+  --accent-purple-glow: rgba(124, 58, 237, 0.4);
+  --accent-amber: #f5a623;
+  --accent-teal: #4ecdc4;
+  --accent-coral: #c66840;
+  --accent-green: #6abf8a;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-vt: 'VT323', monospace;
+  --font-body: 'Share Tech Mono', monospace;
+  --scanline-opacity: 0.03;
+  --glow-purple: 0 0 10px rgba(124, 58, 237, 0.6), 0 0 20px rgba(124, 58, 237, 0.3);
+  --glow-amber: 0 0 10px rgba(245, 166, 35, 0.6);
+  --glow-teal: 0 0 10px rgba(78, 205, 196, 0.6);
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #111827;
-  background: #f9fafb;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  cursor: crosshair;
+}
+
+/* Scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,var(--scanline-opacity)) 2px,
+    rgba(0,0,0,var(--scanline-opacity)) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-amber); }
+
+/* Global link style */
+a { color: var(--accent-teal); text-decoration: none; }
+a:hover { color: var(--accent-amber); text-shadow: var(--glow-amber); }
+
+/* Pixel corners mixin via clip-path */
+.pixel-corners {
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+  );
+}
+
+/* Blinking animation */
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+/* Glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--accent-purple-glow); }
+  50% { box-shadow: var(--glow-purple); }
+}
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+/* Twinkle */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+/* Marquee */
+@keyframes marquee {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+/* Scanline flash on interaction */
+@keyframes scanflash {
+  0% { opacity: 0; }
+  50% { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+/* Star spin */
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Avatar ring pulse */
+@keyframes ring-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--accent-purple), 0 0 8px rgba(124,58,237,0.5); }
+  50% { box-shadow: 0 0 0 3px var(--accent-purple), 0 0 16px rgba(124,58,237,0.8); }
+}
+
+/* Like heart pulse */
+@keyframes heart-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
 }
 
 #root {
@@ -19,15 +119,12 @@ html, body {
 }
 
 button, input, textarea, select {
-  font-family: inherit;
+  font-family: var(--font-body);
+  cursor: crosshair;
 }
 
 img {
   max-width: 100%;
-}
-
-a {
-  color: inherit;
 }
 
 .app-loading {
@@ -35,6 +132,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  color: #9ca3af;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-pixel);
+  letter-spacing: 1px;
 }

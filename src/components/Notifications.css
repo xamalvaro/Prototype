@@ -3,43 +3,52 @@
   top: calc(100% + 10px);
   right: 0;
   width: 340px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  background: var(--bg-card);
+  border: 1px solid var(--accent-purple);
+  border-radius: 2px;
+  box-shadow: var(--glow-purple), 0 12px 40px rgba(0, 0, 0, 0.6);
   z-index: 300;
   overflow: hidden;
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+  );
 }
 
 .notifications-panel__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 12px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .notifications-panel__title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #111827;
+  font-size: 9px;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  color: var(--accent-amber);
+  letter-spacing: 1px;
+  text-shadow: var(--glow-amber);
 }
 
 .notifications-panel__mark-all {
-  font-size: 12px;
-  color: #7C3AED;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--accent-teal);
   background: none;
   border: none;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 600;
+  cursor: crosshair;
   padding: 4px 8px;
-  border-radius: 6px;
-  transition: background 0.15s;
+  border-radius: 2px;
+  transition: color 0.15s;
 }
 
 .notifications-panel__mark-all:hover {
-  background: #ede9fe;
+  color: var(--accent-amber);
+  text-shadow: var(--glow-amber);
 }
 
 .notifications-panel__list {
@@ -50,8 +59,9 @@
 .notifications-panel__empty {
   padding: 32px 16px;
   text-align: center;
-  font-size: 14px;
-  color: #9ca3af;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
 }
 
 .notifications-panel__item {
@@ -59,21 +69,35 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px 16px;
-  cursor: pointer;
+  cursor: crosshair;
   transition: background 0.1s;
   position: relative;
+  border-left: 3px solid transparent;
+}
+
+/* Type-based left borders */
+.notifications-panel__item--follow {
+  border-left-color: var(--accent-purple);
+}
+
+.notifications-panel__item--like {
+  border-left-color: var(--accent-amber);
+}
+
+.notifications-panel__item--comment {
+  border-left-color: var(--accent-teal);
 }
 
 .notifications-panel__item:hover {
-  background: #f9fafb;
+  background: rgba(78, 205, 196, 0.04);
 }
 
 .notifications-panel__item--unread {
-  background: #faf5ff;
+  background: rgba(124, 58, 237, 0.06);
 }
 
 .notifications-panel__item--unread:hover {
-  background: #ede9fe;
+  background: rgba(124, 58, 237, 0.1);
 }
 
 .notifications-panel__item-body {
@@ -85,41 +109,46 @@
 }
 
 .notifications-panel__item-text {
-  font-size: 13px;
-  color: #374151;
-  line-height: 1.45;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  line-height: 1.5;
 }
 
 .notifications-panel__item-user {
-  font-weight: 700;
-  color: #7C3AED;
+  font-weight: 400;
+  color: var(--accent-amber);
   text-decoration: none;
 }
 
 .notifications-panel__item-user:hover {
-  text-decoration: underline;
+  color: var(--accent-amber);
+  text-shadow: var(--glow-amber);
 }
 
 .notifications-panel__item-link {
-  color: #7C3AED;
+  color: var(--accent-teal);
   text-decoration: none;
-  font-weight: 600;
 }
 
 .notifications-panel__item-link:hover {
-  text-decoration: underline;
+  color: var(--accent-amber);
+  text-shadow: var(--glow-amber);
 }
 
 .notifications-panel__item-time {
   font-size: 11px;
-  color: #9ca3af;
+  font-family: var(--font-vt);
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
 }
 
 .notifications-panel__dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #7C3AED;
+  background: var(--accent-purple);
   flex-shrink: 0;
   margin-top: 5px;
+  box-shadow: 0 0 4px rgba(124, 58, 237, 0.6);
 }

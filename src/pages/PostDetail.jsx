@@ -193,7 +193,7 @@ function PostDetail() {
           </div>
 
           <div className="post-detail__discussion">
-            <h3 className="post-detail__discussion-title">Comments ({comments.length})</h3>
+            <h3 className="post-detail__discussion-title">[ DISCUSSION ] ({comments.length})</h3>
 
             <form className="post-detail__comment-form" onSubmit={handleAddComment}>
               <AvatarInitials

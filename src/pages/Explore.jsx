@@ -18,7 +18,7 @@ function Explore() {
   return (
     <div className="explore">
       <div className="explore__header">
-        <h1 className="explore__title">Explore</h1>
+        <h1 className="explore__title">[ EXPLORE TRANSMISSIONS ]</h1>
         <p className="explore__sub">Discover posts from everyone on NewSpace</p>
       </div>
 

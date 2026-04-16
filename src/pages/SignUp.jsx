@@ -60,8 +60,11 @@ function SignUp() {
 
   return (
     <div className="auth-page">
+      <div className="auth-stars"></div>
+      <div className="auth-deco">✦ ✦ ✦</div>
       <div className="auth-card auth-card--wide">
         <div className="auth-card__logo">NEWSPACE</div>
+        <p className="auth-card__tagline">[ CONNECT • SHARE • EXPLORE ]<span className="blink-cursor">_</span></p>
         <h1 className="auth-card__heading">Create account</h1>
         <p className="auth-card__sub">Join the conversation</p>
 

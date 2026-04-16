@@ -15,6 +15,9 @@ function Layout({ children }) {
           {children}
         </main>
       </div>
+      <div className="ticker-bar">
+        <div className="ticker-content">✦ NEWSPACE ONLINE ✦ CONNECT WITH OTHERS ✦ SHARE YOUR WORLD ✦ EST. 2024 ✦ BE YOURSELF ✦ FIND YOUR PEOPLE ✦ NEWSPACE ONLINE ✦ CONNECT WITH OTHERS ✦ SHARE YOUR WORLD ✦</div>
+      </div>
     </div>
   );
 }

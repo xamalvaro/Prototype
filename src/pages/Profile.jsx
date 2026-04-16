@@ -94,7 +94,9 @@ function Profile() {
     <div className="profile">
       <div className="profile__header-card">
         <div className="profile__avatar-row">
-          <AvatarInitials username={profile.username} displayName={profile.displayName} size={72} />
+          <div className="profile__avatar-ring">
+            <AvatarInitials username={profile.username} displayName={profile.displayName} size={72} />
+          </div>
           <div className="profile__identity">
             <h1 className="profile__display-name">{profile.displayName}</h1>
             <span className="profile__username">@{profile.username}</span>
@@ -127,6 +129,12 @@ function Profile() {
             <span className="profile__stat-count">{posts.length}</span>
             <span className="profile__stat-label">Posts</span>
           </div>
+        </div>
+
+        <div className="profile__badges">
+          <span className="profile__badge profile__badge--member">◈ MEMBER</span>
+          {posts.length > 0 && <span className="profile__badge profile__badge--active">★ ACTIVE</span>}
+          {(profile.followersCount || 0) > 0 && <span className="profile__badge profile__badge--verified">✦ CONNECTED</span>}
         </div>
       </div>
 
