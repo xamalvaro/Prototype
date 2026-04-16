@@ -326,7 +326,9 @@ function Messages() {
         currentUser.uid,
         userProfile.username,
         otherUser.uid,
-        otherUser.username
+        otherUser.username,
+        userProfile.avatarUrl || null,
+        otherUser.avatarUrl || null
       );
       setShowNewMsg(false);
       selectConversation(convId);
@@ -385,7 +387,8 @@ function Messages() {
           messageText.trim(),
           conv.participants,
           uploadedUrl,
-          uploadedType
+          uploadedType,
+          userProfile?.avatarUrl || null
         );
       } else {
         const recipientId = conv.participants.find((p) => p !== currentUser.uid);
@@ -400,7 +403,8 @@ function Messages() {
           messageText.trim(),
           recipientId,
           uploadedUrl,
-          uploadedType
+          uploadedType,
+          userProfile?.avatarUrl || null
         );
       }
 
@@ -484,7 +488,7 @@ function Messages() {
                 onClick={() => startConversationWith(user)}
                 disabled={newMsgLoading}
               >
-                <AvatarInitials username={user.username} displayName={user.displayName} size={30} />
+                <AvatarInitials username={user.username} displayName={user.displayName} avatarUrl={user.avatarUrl || null} size={30} />
                 <span className="messages__new-user-name">{user.displayName}</span>
                 <span className="messages__new-user-handle">@{user.username}</span>
               </button>
@@ -632,6 +636,7 @@ function Messages() {
                   <AvatarInitials
                     username={conv.participantUsernames?.[conv.participants?.find(p => p !== currentUser?.uid)] || 'unknown'}
                     displayName={conv.participantDisplayNames?.[conv.participants?.find(p => p !== currentUser?.uid)] || 'unknown'}
+                    avatarUrl={conv.participantAvatarUrls?.[conv.participants?.find(p => p !== currentUser?.uid)] || null}
                     size={38}
                   />
                 )}
@@ -680,7 +685,7 @@ function Messages() {
               ) : (
                 otherParticipant && (
                   <>
-                    <AvatarInitials username={otherParticipant.username} displayName={otherParticipant.displayName} size={36} />
+                    <AvatarInitials username={otherParticipant.username} displayName={otherParticipant.displayName} avatarUrl={activeConv.participantAvatarUrls?.[otherParticipant.uid] || null} size={36} />
                     <div className="messages__thread-header-info">
                       <span className="messages__thread-header-name">{otherParticipant.displayName || otherParticipant.username}</span>
                       <span className="messages__thread-header-handle">@{otherParticipant.username}</span>
@@ -715,7 +720,7 @@ function Messages() {
                     className={`messages__message ${isOwn ? 'messages__message--own' : ''}`}
                   >
                     {!isOwn && (
-                      <AvatarInitials username={msg.senderUsername} displayName={msg.senderUsername} size={28} />
+                      <AvatarInitials username={msg.senderUsername} displayName={msg.senderUsername} avatarUrl={msg.senderAvatarUrl || null} size={28} />
                     )}
                     <div className="messages__message-bubble-wrap">
                       {!isOwn && activeConv.type === 'group' && (

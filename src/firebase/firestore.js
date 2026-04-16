@@ -351,27 +351,36 @@ export function getConversationId(uid1, uid2) {
   return [uid1, uid2].sort().join('_');
 }
 
-export async function getOrCreateConversation(uid1, username1, uid2, username2) {
+export async function getOrCreateConversation(uid1, username1, uid2, username2, avatarUrl1 = null, avatarUrl2 = null) {
   const convId = getConversationId(uid1, uid2);
   const ref = doc(db, 'conversations', convId);
   const snap = await getDoc(ref);
   if (!snap.exists()) {
     await setDoc(ref, {
+      type: 'direct',
       participants: [uid1, uid2],
       participantUsernames: { [uid1]: username1, [uid2]: username2 },
+      participantAvatarUrls: { [uid1]: avatarUrl1 || null, [uid2]: avatarUrl2 || null },
       lastMessage: '',
       lastMessageAt: serverTimestamp(),
       unreadCount: { [uid1]: 0, [uid2]: 0 },
+    });
+  } else {
+    // Update avatars in case they changed
+    await updateDoc(ref, {
+      [`participantAvatarUrls.${uid1}`]: avatarUrl1 || null,
+      [`participantAvatarUrls.${uid2}`]: avatarUrl2 || null,
     });
   }
   return convId;
 }
 
-export async function sendMessage(conversationId, senderId, senderUsername, content, recipientId, mediaUrl = null, mediaType = null) {
+export async function sendMessage(conversationId, senderId, senderUsername, content, recipientId, mediaUrl = null, mediaType = null, senderAvatarUrl = null) {
   await addDoc(collection(db, 'messages'), {
     conversationId,
     senderId,
     senderUsername,
+    senderAvatarUrl: senderAvatarUrl || null,
     content,
     mediaUrl,
     mediaType,
@@ -481,13 +490,14 @@ export async function leaveGroup(conversationId, uid) {
   });
 }
 
-export async function sendGroupMessage(conversationId, senderId, senderUsername, content, participantIds, mediaUrl = null, mediaType = null) {
+export async function sendGroupMessage(conversationId, senderId, senderUsername, content, participantIds, mediaUrl = null, mediaType = null, senderAvatarUrl = null) {
   const batch = writeBatch(db);
   const msgRef = doc(collection(db, 'messages'));
   batch.set(msgRef, {
     conversationId,
     senderId,
     senderUsername,
+    senderAvatarUrl: senderAvatarUrl || null,
     content,
     mediaUrl,
     mediaType,
