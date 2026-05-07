@@ -94,7 +94,6 @@
   text-shadow: var(--glow-amber);
   position: relative;
   z-index: 1;
-  animation: float 3s ease-in-out infinite;
 }
 
 .auth-card {

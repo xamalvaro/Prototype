@@ -19,7 +19,7 @@ function Explore() {
     <div className="explore">
       <div className="explore__header">
         <h1 className="explore__title">[ EXPLORE TRANSMISSIONS ]</h1>
-        <p className="explore__sub">Discover posts from everyone on NewSpace</p>
+        <p className="explore__sub">Discover posts from everyone on Pulsar</p>
       </div>
 
       <div className="explore__feed">

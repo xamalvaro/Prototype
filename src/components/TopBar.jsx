@@ -83,7 +83,7 @@ function TopBar() {
 
   return (
     <header className="topbar">
-      <div className="topbar__logo">NEWSPACE</div>
+      <div className="topbar__logo">PULSAR</div>
 
       <div className="topbar__search-wrapper" ref={searchRef}>
         <div className="topbar__search">
