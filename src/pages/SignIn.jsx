@@ -37,15 +37,9 @@ function SignIn() {
   return (
     <div className="auth-page">
       <div className="auth-bg">
-        <div className="auth-nebula"></div>
-        <div className="auth-rings">
-          <div className="auth-ring"></div>
-          <div className="auth-ring"></div>
-          <div className="auth-ring"></div>
-          <div className="auth-ring"></div>
-          <div className="auth-ring"></div>
-        </div>
-        <div className="auth-stars"></div>
+        <div className="auth-static"></div>
+        <div className="auth-scanlines"></div>
+        <div className="auth-vignette"></div>
       </div>
       <div className="auth-deco">✦ ✦ ✦</div>
       <div className="auth-card">
