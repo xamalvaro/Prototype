@@ -54,7 +54,17 @@ function SignUp() {
 
   return (
     <div className="auth-page">
-      <div className="auth-stars"></div>
+      <div className="auth-bg">
+        <div className="auth-nebula"></div>
+        <div className="auth-rings">
+          <div className="auth-ring"></div>
+          <div className="auth-ring"></div>
+          <div className="auth-ring"></div>
+          <div className="auth-ring"></div>
+          <div className="auth-ring"></div>
+        </div>
+        <div className="auth-stars"></div>
+      </div>
       <div className="auth-deco">✦ ✦ ✦</div>
       <div className="auth-card auth-card--wide">
         <div className="auth-card__logo">PULSAR</div>

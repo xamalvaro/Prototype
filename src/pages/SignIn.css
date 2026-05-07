@@ -4,88 +4,126 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--bg-primary);
+  background: #07080d;
   padding: 24px;
   position: relative;
   overflow: hidden;
 }
 
-/* CSS starfield */
-.auth-stars {
+/* ── Background container ───────────────────────────── */
+.auth-bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
+}
+
+/* ── Nebula gradient layer ──────────────────────────── */
+.auth-nebula {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(124,58,237,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(78,205,196,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 80% 20%, rgba(245,166,35,0.05) 0%, transparent 60%);
+}
+
+/* ── Pulsing rings ──────────────────────────────────── */
+.auth-rings {
+  position: absolute;
+  inset: 0;
+}
+
+.auth-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  margin-left: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 58, 237, 0.7);
+  animation: ring-expand 6s ease-out infinite;
+}
+
+.auth-ring:nth-child(1) { animation-delay: 0s;    border-color: rgba(124,58,237,0.7); }
+.auth-ring:nth-child(2) { animation-delay: 1.2s;  border-color: rgba(78,205,196,0.5); }
+.auth-ring:nth-child(3) { animation-delay: 2.4s;  border-color: rgba(124,58,237,0.6); }
+.auth-ring:nth-child(4) { animation-delay: 3.6s;  border-color: rgba(78,205,196,0.4); }
+.auth-ring:nth-child(5) { animation-delay: 4.8s;  border-color: rgba(124,58,237,0.5); }
+
+@keyframes ring-expand {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  20%  { opacity: 0.6; }
+  100% { transform: scale(240); opacity: 0; }
+}
+
+/* ── Starfield ──────────────────────────────────────── */
+.auth-stars {
+  position: absolute;
+  inset: 0;
 }
 
 .auth-stars::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: transparent;
   box-shadow:
-    42px 120px 1px 0 rgba(232,224,208,0.6),
-    180px 55px 1px 0 rgba(232,224,208,0.5),
-    320px 200px 1px 0 rgba(245,166,35,0.5),
-    500px 80px 1px 0 rgba(232,224,208,0.4),
-    650px 300px 1px 0 rgba(78,205,196,0.5),
-    800px 150px 1px 0 rgba(232,224,208,0.6),
-    1000px 420px 1px 0 rgba(232,224,208,0.3),
-    1100px 50px 1px 0 rgba(245,166,35,0.4),
-    1200px 350px 1px 0 rgba(232,224,208,0.5),
-    75px 400px 1px 0 rgba(78,205,196,0.4),
-    250px 480px 1px 0 rgba(232,224,208,0.3),
-    380px 600px 1px 0 rgba(245,166,35,0.3),
-    900px 560px 1px 0 rgba(232,224,208,0.5),
-    550px 700px 1px 0 rgba(78,205,196,0.4),
-    720px 800px 1px 0 rgba(232,224,208,0.3),
-    1150px 650px 1px 0 rgba(245,166,35,0.5),
-    100px 750px 1px 0 rgba(232,224,208,0.4),
-    450px 900px 1px 0 rgba(232,224,208,0.3),
-    850px 350px 1px 0 rgba(78,205,196,0.3),
-    1300px 180px 1px 0 rgba(232,224,208,0.5),
-    1350px 700px 1px 0 rgba(245,166,35,0.3),
-    200px 850px 1px 0 rgba(232,224,208,0.4),
-    620px 440px 1px 0 rgba(232,224,208,0.5),
-    960px 230px 1px 0 rgba(78,205,196,0.4),
-    1050px 900px 1px 0 rgba(232,224,208,0.3);
+    42px  120px 1px 0 rgba(232,224,208,0.7),
+    180px  55px 1px 0 rgba(232,224,208,0.5),
+    320px 200px 1px 0 rgba(245,166,35,0.6),
+    500px  80px 1px 0 rgba(232,224,208,0.5),
+    650px 300px 1px 0 rgba(78,205,196,0.6),
+    800px 150px 1px 0 rgba(232,224,208,0.7),
+   1000px 420px 1px 0 rgba(232,224,208,0.4),
+   1100px  50px 1px 0 rgba(245,166,35,0.5),
+   1200px 350px 1px 0 rgba(232,224,208,0.6),
+     75px 400px 1px 0 rgba(78,205,196,0.5),
+    250px 480px 1px 0 rgba(232,224,208,0.4),
+    380px 600px 1px 0 rgba(245,166,35,0.4),
+    900px 560px 1px 0 rgba(232,224,208,0.6),
+    550px 700px 1px 0 rgba(78,205,196,0.5),
+    720px 800px 1px 0 rgba(232,224,208,0.4),
+   1150px 650px 1px 0 rgba(245,166,35,0.6),
+    100px 750px 1px 0 rgba(232,224,208,0.5),
+    450px 900px 1px 0 rgba(232,224,208,0.4),
+    850px 350px 1px 0 rgba(78,205,196,0.4),
+   1300px 180px 1px 0 rgba(232,224,208,0.6),
+   1350px 700px 1px 0 rgba(245,166,35,0.4),
+    200px 850px 1px 0 rgba(232,224,208,0.5),
+    620px 440px 1px 0 rgba(232,224,208,0.6),
+    960px 230px 1px 0 rgba(78,205,196,0.5),
+   1050px 900px 1px 0 rgba(232,224,208,0.4);
   animation: twinkle 4s ease-in-out infinite alternate;
 }
 
 .auth-stars::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: transparent;
   box-shadow:
-    88px 200px 1px 0 rgba(232,224,208,0.4),
-    160px 330px 1px 0 rgba(245,166,35,0.4),
-    290px 140px 1px 0 rgba(232,224,208,0.5),
-    430px 520px 1px 0 rgba(78,205,196,0.3),
-    580px 230px 1px 0 rgba(232,224,208,0.4),
-    710px 670px 1px 0 rgba(232,224,208,0.3),
-    880px 480px 1px 0 rgba(245,166,35,0.4),
-    1020px 310px 1px 0 rgba(232,224,208,0.5),
-    1180px 750px 1px 0 rgba(78,205,196,0.3),
-    340px 760px 1px 0 rgba(232,224,208,0.4),
-    670px 100px 1px 0 rgba(245,166,35,0.3),
-    940px 820px 1px 0 rgba(232,224,208,0.4),
-    1260px 430px 1px 0 rgba(78,205,196,0.4),
-    120px 960px 1px 0 rgba(232,224,208,0.3),
-    780px 570px 1px 0 rgba(245,166,35,0.3);
+     88px 200px 1px 0 rgba(232,224,208,0.5),
+    160px 330px 1px 0 rgba(245,166,35,0.5),
+    290px 140px 1px 0 rgba(232,224,208,0.6),
+    430px 520px 1px 0 rgba(78,205,196,0.4),
+    580px 230px 1px 0 rgba(232,224,208,0.5),
+    710px 670px 1px 0 rgba(232,224,208,0.4),
+    880px 480px 1px 0 rgba(245,166,35,0.5),
+   1020px 310px 1px 0 rgba(232,224,208,0.6),
+   1180px 750px 1px 0 rgba(78,205,196,0.4),
+    340px 760px 1px 0 rgba(232,224,208,0.5),
+    670px 100px 1px 0 rgba(245,166,35,0.4),
+    940px 820px 1px 0 rgba(232,224,208,0.5),
+   1260px 430px 1px 0 rgba(78,205,196,0.5),
+    120px 960px 1px 0 rgba(232,224,208,0.4),
+    780px 570px 1px 0 rgba(245,166,35,0.4);
   animation: twinkle 6s ease-in-out infinite alternate-reverse;
 }
 
-/* Decorative stars row above card */
+/* ── Decorative stars row above card ───────────────── */
 .auth-deco {
   font-size: 20px;
   color: var(--accent-amber);
@@ -96,11 +134,14 @@
   z-index: 1;
 }
 
+/* ── Card ───────────────────────────────────────────── */
 .auth-card {
-  background: var(--bg-card);
+  background: rgba(22, 27, 39, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 2px;
   border: 1px solid var(--accent-purple);
-  box-shadow: var(--glow-purple), 0 8px 32px rgba(0,0,0,0.6);
+  box-shadow: var(--glow-purple), 0 8px 48px rgba(0,0,0,0.7);
   padding: 40px 36px;
   width: 100%;
   max-width: 420px;
@@ -199,7 +240,7 @@
   color: var(--text-primary);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
-  background: var(--bg-secondary);
+  background: rgba(13, 15, 20, 0.8);
 }
 
 .auth-form__input:focus {
@@ -268,4 +309,9 @@
   font-family: var(--font-mono);
   color: var(--text-muted);
   margin-top: 2px;
+}
+
+/* Wide card variant for sign up */
+.auth-card--wide {
+  max-width: 480px;
 }
